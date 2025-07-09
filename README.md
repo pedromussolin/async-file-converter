@@ -96,6 +96,31 @@ GET /api/conversions/
 - Django Admin: http://127.0.0.1:8000/admin/
 - Flower (monitor Celery): http://localhost:5555
 
+## Testes Automatizados
+
+O projeto possui uma suíte de testes automatizados para garantir a qualidade e o correto funcionamento dos endpoints e do processamento assíncrono.
+
+### Como executar os testes
+
+1. Certifique-se de que o ambiente virtual está ativado e as dependências instaladas.
+2. Execute os testes com o comando:
+   ```powershell
+   python manage.py test
+   ```
+   Ou para rodar apenas os testes da aplicação:
+   ```powershell
+   python manage.py test app_converter
+   ```
+
+### O que é testado
+- CRUD dos tipos de arquivos permitidos (`FileType`)
+- Upload e registro de conversão de arquivos
+- Listagem de conversões
+- Fluxo assíncrono de conversão com Celery (testes de integração)
+- Validações de campos obrigatórios e formatos inválidos
+
+Os testes garantem que o backend está funcionando corretamente, incluindo a integração com Celery e Redis.
+
 ## Licença
 Este projeto está licenciado sob os termos da licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
