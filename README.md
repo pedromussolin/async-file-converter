@@ -1,126 +1,126 @@
 # async-file-converter
 
-Conversor de arquivos com fila assíncrona, desenvolvido em Python utilizando Django REST Framework, Celery e Redis. Permite a conversão de diversos tipos de arquivos por meio de uma API backend, ideal para integração com interfaces gráficas ou outros sistemas.
+Asynchronous file converter developed in Python using Django REST Framework, Celery, and Redis. It allows the conversion of various file types through a backend API, ideal for integration with graphical interfaces or other systems.
 
-## Funcionalidades
-- Conversão assíncrona de arquivos com gerenciamento de fila (Celery + Redis)
-- Suporte a múltiplos formatos de documentos, imagens, áudio, vídeo e arquivos compactados
-- API RESTful para integração com frontends ou automações
-- Monitoramento de tarefas Celery via Flower
-- Administração dos tipos de arquivos e conversões via Django Admin
+## Features
+- Asynchronous file conversion with queue management (Celery + Redis)
+- Support for multiple document, image, audio, video, and compressed file formats
+- RESTful API for integration with frontends or automations
+- Celery task monitoring via Flower
+- Administration of file types and conversions via Django Admin
 
-## Formatos Suportados
-### Documentos
+## Supported Formats
+### Documents
 - .pdf, .docx, .doc, .xlsx, .xls, .pptx, .ppt, .txt, .rtf, .odt, .ods, .odp, .epub, .mobi
 
-### Imagens
+### Images
 - .jpeg, .jpg, .png, .gif, .bmp, .tiff, .tif, .svg, .ai, .eps
 
-### Áudio
+### Audio
 - .mp3, .aac, .ogg, .wma, .flac, .alac, .wav, .aiff
 
-### Vídeo
+### Video
 - .mp4, .avi, .mov, .mkv, .wmv, .flv, .webm
 
-### Arquivos e Compactados
+### Compressed Files
 - .zip, .rar, .7z, .tar.gz, .tgz
 
-### Outros
+### Others
 - .dwg, .dxf, .html, .htm, .xml, .json, .ttf, .otf
 
-## Requisitos
+## Requirements
 - Python 3.8+
-- Virtualenv (recomendado para ambiente isolado)
-- Redis (broker para Celery)
+- Virtualenv (recommended for isolated environment)
+- Redis (broker for Celery)
 
-## Instalação e Execução (Desenvolvimento)
-1. Clone o repositório:
+## Installation and Running (Development)
+1. Clone the repository:
    ```powershell
-   git clone <url-do-repositorio>
+   git clone <repository-url>
    cd async-file-converter
    ```
-2. Crie e ative um ambiente virtual:
+2. Create and activate a virtual environment:
    ```powershell
    python -m venv venv
    .\venv\Scripts\Activate
    ```
-3. Instale as dependências:
+3. Install dependencies:
    ```powershell
    pip install -r requirements.txt
-   pip install flower  # Para monitorar o Celery
+   pip install flower  # To monitor Celery
    ```
-4. Execute as migrações do Django:
+4. Run Django migrations:
    ```powershell
    python manage.py migrate
    ```
-5. Inicie o Redis (deixe rodando em um terminal separado):
+5. Start Redis (leave it running in a separate terminal):
    ```powershell
    redis-server
    ```
-6. Inicie o worker Celery (em outro terminal):
+6. Start the Celery worker (in another terminal):
    ```powershell
    celery -A project_async_file_converter worker --loglevel=info --pool=solo
    ```
-7. (Opcional) Inicie o Flower para monitorar as tasks Celery:
+7. (Optional) Start Flower to monitor Celery tasks:
    ```powershell
    celery -A project_async_file_converter flower
-   # Acesse http://localhost:5555
+   # Access http://localhost:5555
    ```
-8. Inicie o servidor de desenvolvimento Django:
+8. Start the Django development server:
    ```powershell
    python manage.py runserver
    ```
 
-## Utilização da API
-A API estará disponível em `http://127.0.0.1:8000/`.
+## API Usage
+The API will be available at `http://127.0.0.1:8000/`.
 
-### Upload de arquivo para conversão
-Faça um POST para `/api/convert/` com um arquivo e o campo `formato_destino`:
+### File upload for conversion
+Send a POST to `/api/convert/` with a file and the `formato_destino` field:
 
-**Exemplo com curl:**
+**Example with curl:**
 ```powershell
 curl -X POST http://127.0.0.1:8000/api/convert/ ^
-  -F "file=@caminho/do/seu/arquivo.pdf" ^
+  -F "file=@path/to/your/file.pdf" ^
   -F "formato_destino=png"
 ```
 
-- O campo `formato_destino` deve ser a extensão do formato de saída cadastrado (ex: `docx`, `pdf`, `png`, etc, sem o ponto).
-- Para ver todos os formatos disponíveis, acesse `/api/file-types/`.
+- The `formato_destino` field must be the extension of the registered output format (e.g., `docx`, `pdf`, `png`, etc., without the dot).
+- To see all available formats, access `/api/file-types/`.
 
-### Consultar status das conversões
+### Check conversion status
 ```http
 GET /api/conversions/
 ```
 
-### Administração
+### Administration
 - Django Admin: http://127.0.0.1:8000/admin/
-- Flower (monitor Celery): http://localhost:5555
+- Flower (Celery monitor): http://localhost:5555
 
-## Testes Automatizados
+## Automated Tests
 
-O projeto possui uma suíte de testes automatizados para garantir a qualidade e o correto funcionamento dos endpoints e do processamento assíncrono.
+The project includes a suite of automated tests to ensure the quality and correct functioning of the endpoints and asynchronous processing.
 
-### Como executar os testes
+### How to run the tests
 
-1. Certifique-se de que o ambiente virtual está ativado e as dependências instaladas.
-2. Execute os testes com o comando:
+1. Make sure the virtual environment is activated and dependencies are installed.
+2. Run the tests with the command:
    ```powershell
    python manage.py test
    ```
-   Ou para rodar apenas os testes da aplicação:
+   Or to run only the app tests:
    ```powershell
    python manage.py test app_converter
    ```
 
-### O que é testado
-- CRUD dos tipos de arquivos permitidos (`FileType`)
-- Upload e registro de conversão de arquivos
-- Listagem de conversões
-- Fluxo assíncrono de conversão com Celery (testes de integração)
-- Validações de campos obrigatórios e formatos inválidos
+### What is tested
+- CRUD for allowed file types (`FileType`)
+- File upload and conversion registration
+- Listing of conversions
+- Asynchronous conversion flow with Celery (integration tests)
+- Validation of required fields and invalid formats
 
-Os testes garantem que o backend está funcionando corretamente, incluindo a integração com Celery e Redis.
+The tests ensure that the backend is working correctly, including integration with Celery and Redis.
 
-## Licença
-Este projeto está licenciado sob os termos da licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+## License
+This project is licensed under the MIT license. See the [LICENSE](LICENSE) file for more details.
 
